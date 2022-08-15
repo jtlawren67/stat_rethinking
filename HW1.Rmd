@@ -2,7 +2,7 @@
 title: "HW Week 1"
 author: "JLaw"
 date: "2022-08-14"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
