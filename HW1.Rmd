@@ -1,0 +1,78 @@
+---
+title: "HW Week 1"
+author: "JLaw"
+date: "2022-08-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, error = FALSE, warning = FALSE, out.width = "100%")
+```
+
+```{r}
+library(rethinking)
+```
+
+
+## Week 1 Homework
+
+[HW1 Questions](https://github.com/rmcelreath/stat_rethinking_2020/blob/main/homework/week01/week01.pdf)
+
+### Q1:
+
+*Suppose the globe tossing data (Chapter 2) had turned out to be 4 water in 15 tosses.  Construct the posterior distribution using grid approximation.  Use the same flat prior as before.*
+
+```{r HW1}
+#Compute values of P to try
+p_grid <- seq(0, 1, length.out = 1000)
+# Define the Prior
+prob_p <- rep(1, 1000)
+# Define the likelihood for each value of P from the Grid
+prob_data <- dbinom(x = 4, size = 15, prob = p_grid)
+# Calculate Posterior 
+posterior <- prob_p * prob_data
+# Normalize Posterior
+posterior <- posterior / sum(posterior)
+
+plot(posterior, type = 'l')
+
+```
+
+
+### Q2:
+
+*Start over in 1, but now use a prior that is zero below $p$ = 0.5 and constant above $p$ = 0.5.  The corresponds to prior information that a majority of the Earth's surface is water.  What difference does a better prior makes?*
+
+```{r HW2}
+#Compute values of P to try
+p_grid <- seq(0, 1, length.out = 1000)
+# Define the Prior
+prob_p <- ifelse(p_grid < .5, 0, 1)
+# Define the likelihood for each value of P from the Grid
+prob_data <- dbinom(x = 4, size = 15, prob = p_grid)
+# Calculate Posterior 
+posterior <- prob_p * prob_data
+# Normalize Posterior
+posterior <- posterior / sum(posterior)
+
+plot(posterior, type = 'l')
+
+```
+
+### Q3:
+
+*For the posterior distribution of 2, compute 89% percentile and HPDI intervals.  Compare the widths of these intervals.  Which is wider, why?  If you had only the information in the interval, what might you misunderstand about the sape of the posterior distribution?*
+
+```{r HW3}
+#Get Posterior Samples
+samples <- sample(p_grid, size = 1000, replace = TRUE, prob = posterior)
+
+#89th Percentile Credible Intervals with Equal Tails
+PI(samples, prob = .89)
+
+#89th Percentile Highest Posterior Dentist
+HPDI(samples, prob = .89)
+
+```
+
+
